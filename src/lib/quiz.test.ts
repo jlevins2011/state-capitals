@@ -60,6 +60,14 @@ describe("curriculum", () => {
 });
 
 describe("quiz builder", () => {
+  it("avoids repeating a state while unused ones remain", () => {
+    const lesson = getLesson("ne-meet");
+    if (!lesson) throw new Error("missing lesson");
+    const deck = buildDeck(lesson, seeded(99));
+    const ids = deck.map((q) => (q.kind === "match" ? q.left[0].id : q.stateId));
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
   it("never puts the correct answer twice or omits it", () => {
     const lesson = getLesson("ne-capitals-north");
     if (!lesson) throw new Error("missing lesson");
@@ -70,6 +78,18 @@ describe("quiz builder", () => {
         expect(q.choices).toContain(q.answer);
         expect(new Set(q.choices).size).toBe(q.choices.length);
         expect(q.choices.length).toBe(4);
+      }
+    }
+  });
+
+  it("prefers same-region name distractors", () => {
+    const lesson = getLesson("ne-meet");
+    if (!lesson) throw new Error("missing lesson");
+    const deck = buildDeck(lesson, seeded(3));
+    const names = new Set(STATES.filter((s) => lesson.stateIds.includes(s.id)).map((s) => s.name));
+    for (const q of deck) {
+      if (q.kind === "choice" && q.skill === "highlight-name") {
+        expect(q.choices.every((choice) => names.has(choice))).toBe(true);
       }
     }
   });

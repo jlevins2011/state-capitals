@@ -16,8 +16,10 @@ export function pickN<T>(items: T[], n: number, rand: () => number = Math.random
 
 function distractorStates(correctId: string, poolIds: string[], extraIds: string[], count: number, rand: () => number) {
   const fromPool = poolIds.filter((id) => id !== correctId);
-  const fromExtra = extraIds.filter((id) => id !== correctId && !fromPool.includes(id));
-  return pickN([...fromPool, ...fromExtra], count, rand);
+  const picked = pickN(fromPool, count, rand);
+  if (picked.length >= count) return picked;
+  const fromExtra = extraIds.filter((id) => id !== correctId && !picked.includes(id) && !fromPool.includes(id));
+  return [...picked, ...pickN(fromExtra, count - picked.length, rand)];
 }
 
 function choicesFor(correct: string, others: string[], rand: () => number): string[] {
@@ -136,39 +138,43 @@ export function buildMatch(poolIds: string[], rand: () => number = Math.random):
   };
 }
 
+function pickState(pool: string[], used: Set<string>, rand: () => number): string {
+  const unused = pool.filter((id) => !used.has(id));
+  const source = unused.length ? unused : pool;
+  const id = source[Math.floor(rand() * source.length)];
+  used.add(id);
+  return id;
+}
+
 export function buildDeck(lesson: Lesson, rand: () => number = Math.random): Question[] {
   const pool = lesson.stateIds;
   const skills = lesson.skills.length ? lesson.skills : (["highlight-name"] as QuestionSkill[]);
   const deck: Question[] = [];
+  const used = new Set<string>();
   let skillIndex = 0;
-  let guard = 0;
 
-  while (deck.length < lesson.questionCount && guard < lesson.questionCount * 8) {
-    guard += 1;
+  while (deck.length < lesson.questionCount) {
     const skill = skills[skillIndex % skills.length];
     skillIndex += 1;
-    const stateId = pool[Math.floor(rand() * pool.length)];
 
-    if (skill === "tap-state") {
-      if (deck.some((q) => q.kind === "tap" && q.stateId === stateId && deck.length < pool.length)) {
-        const unused = pool.find((id) => !deck.some((q) => q.kind === "tap" && q.stateId === id));
-        deck.push(buildTap(unused ?? stateId));
+    if (skill === "match-capitals") {
+      if (pool.length >= 4) {
+        deck.push(buildMatch(pool, rand));
       } else {
-        deck.push(buildTap(stateId));
+        deck.push(buildChoice("capital-of", pickState(pool, used, rand), pool, rand));
       }
       continue;
     }
 
-    if (skill === "match-capitals") {
-      if (pool.length >= 4) deck.push(buildMatch(pool, rand));
-      else deck.push(buildChoice("capital-of", stateId, pool, rand));
-      continue;
+    const stateId = pickState(pool, used, rand);
+    if (skill === "tap-state") {
+      deck.push(buildTap(stateId));
+    } else {
+      deck.push(buildChoice(skill, stateId, pool, rand));
     }
-
-    deck.push(buildChoice(skill, stateId, pool, rand));
   }
 
-  return deck.slice(0, lesson.questionCount);
+  return deck;
 }
 
 export function accuracyOf(correct: number, errors: number): number {

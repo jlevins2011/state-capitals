@@ -5,6 +5,14 @@ import { sounds } from "../lib/audio";
 import { useActiveChild, useStore } from "../store/StoreContext";
 import { Pip } from "./Pip";
 
+function formatPlayTime(ms: number): string {
+  const secs = Math.max(1, Math.round(ms / 1000));
+  if (secs < 60) return `${secs}s`;
+  const mins = Math.floor(secs / 60);
+  const rem = secs % 60;
+  return `${mins}m ${rem}s`;
+}
+
 export function Results({ lessonId, sessionId }: { lessonId: string; sessionId: string }) {
   const { dispatch } = useStore();
   const child = useActiveChild();
@@ -70,7 +78,7 @@ export function Results({ lessonId, sessionId }: { lessonId: string; sessionId: 
           <span>misses</span>
         </div>
         <div>
-          <b>{Math.round(session.durationMs / 1000)}s</b>
+          <b>{formatPlayTime(session.durationMs)}</b>
           <span>time</span>
         </div>
       </div>
