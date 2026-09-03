@@ -57,6 +57,8 @@ export function UsaMap({
         return (
           <path
             key={path.id}
+            id={`state-${path.id}`}
+            data-state={path.id}
             d={path.d}
             className={`usa-state ${isPulse ? "is-pulse" : ""} ${isLit ? "is-lit" : ""} ${interactive ? "is-hot" : ""}`}
             fill={fill}
@@ -111,6 +113,7 @@ export function StateSilhouette({ stateId }: { stateId: string }) {
     <svg className="silhouette" viewBox={box} role="img" aria-label="Shape of a U.S. state">
       <path
         ref={ref}
+        data-state={stateId}
         d={path.d}
         className="silhouette-shape is-pulse"
         fill="#f4c14e"

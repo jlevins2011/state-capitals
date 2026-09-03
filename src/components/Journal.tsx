@@ -28,7 +28,7 @@ export function Journal() {
           const known = found.has(state.id);
           return (
             <article key={state.id} className={`journal-card panel ${known ? "is-known" : "is-locked"}`}>
-              <p className="eyebrow">{state.regionId}</p>
+              <p className="eyebrow">{state.regionId.replace(/^\w/, (c) => c.toUpperCase())}</p>
               <h3>
                 {state.id} · {state.name}
               </h3>

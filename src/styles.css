@@ -306,6 +306,7 @@ h1 { font-size: clamp(2rem, 5vw, 3.6rem); }
 
 @media (max-width: 720px) {
   .map-top, .lesson-top { flex-wrap: wrap; }
+  .map-who { flex: 1 1 100%; }
   .coat-row { grid-template-columns: repeat(2, 1fr); }
   .lesson-stage { grid-template-columns: 1fr; }
   .choice-grid, .match-board { grid-template-columns: 1fr; }
