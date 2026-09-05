@@ -162,7 +162,8 @@ export function LessonView({ lessonId }: { lessonId: string }) {
                   <UsaMap
                     regionId={lesson.regionId}
                     highlightId={question.kind === "choice" ? question.stateId : null}
-                    pulseId={question.kind === "choice" ? question.stateId : null}
+                    zoomToId={question.stateId}
+                    zoomMode={question.kind === "tap" ? "wide" : "tight"}
                     wrongId={wrongId}
                     litIds={factsFound.map((id) => id.split("-")[0])}
                     interactive={question.kind === "tap" && !feedback}
