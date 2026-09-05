@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getLesson, WORLDS } from "../data/curriculum";
 import { getState } from "../data/states";
 import { sounds } from "../lib/audio";
+import { lessonShowsAbbreviations } from "../lib/mapLabels";
 import { buildDeck, factId, withFocusedState, withPlayMode } from "../lib/quiz";
 import { useActiveChild, useStore } from "../store/StoreContext";
 import type { MatchQuestion, Question } from "../types";
@@ -42,6 +43,7 @@ export function LessonView({ lessonId }: { lessonId: string }) {
   if (!child || !lesson) return null;
   const world = WORLDS.find((item) => item.id === lesson.worldId);
   const question = deck[index];
+  const showMapLabels = state.settings.alwaysShowLabels || lessonShowsAbbreviations(lesson);
   const progress = deck.length ? index / deck.length : 0;
   const pose = feedback?.ok === false ? "stumble" : feedback?.ok ? "celebrate" : started ? "idle" : "sit";
   const showMaggie = errors >= 3 && feedback?.ok === false;
@@ -178,9 +180,12 @@ export function LessonView({ lessonId }: { lessonId: string }) {
                       if (question.kind !== "tap") return;
                       mark(id === question.stateId, question, id === question.stateId ? undefined : id);
                     }}
-                    showLabels={state.settings.showLabels}
+                    showLabels={showMapLabels}
                     focusIds={lesson.stateIds}
                   />
+                  {!showMapLabels && (
+                    <p className="tip label-hint">Postal codes are off. Use the shape and the neighbors.</p>
+                  )}
                 </div>
               )}
 

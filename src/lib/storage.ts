@@ -5,7 +5,7 @@ const KEY = "camp-compass.v1";
 export const DEFAULT_SETTINGS: Settings = {
   sound: true,
   highContrast: false,
-  showLabels: true,
+  alwaysShowLabels: false,
 };
 
 export function emptyStore(): StoreData {
@@ -27,7 +27,11 @@ export function loadStore(): StoreData {
     return {
       ...emptyStore(),
       ...parsed,
-      settings: { ...DEFAULT_SETTINGS, ...parsed.settings },
+      settings: {
+        ...DEFAULT_SETTINGS,
+        ...parsed.settings,
+        alwaysShowLabels: Boolean(parsed.settings?.alwaysShowLabels),
+      },
       children: parsed.children.map((child) => ({
         ...child,
         factsFound: child.factsFound ?? [],

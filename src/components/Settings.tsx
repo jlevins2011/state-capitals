@@ -23,11 +23,14 @@ export function Settings() {
         <label className="toggle">
           <input
             type="checkbox"
-            checked={state.settings.showLabels}
-            onChange={(e) => dispatch({ type: "settings", patch: { showLabels: e.target.checked } })}
+            checked={state.settings.alwaysShowLabels}
+            onChange={(e) => dispatch({ type: "settings", patch: { alwaysShowLabels: e.target.checked } })}
           />
-          State abbreviations on the map
+          Always show state abbreviations
         </label>
+        <p className="tip">
+          Early trails show NY, PA, and the other postal codes. Later trails hide them so kids use the shapes — unless you keep this on.
+        </p>
         <label className="toggle">
           <input
             type="checkbox"

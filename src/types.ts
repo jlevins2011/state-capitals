@@ -99,7 +99,7 @@ export type Child = {
 export type Settings = {
   sound: boolean;
   highContrast: boolean;
-  showLabels: boolean;
+  alwaysShowLabels: boolean;
 };
 
 export type StoreData = {
