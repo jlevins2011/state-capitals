@@ -116,10 +116,6 @@ export function UsaMap({
     };
   }, [askId, regionalView, zoomMode, zoomToId]);
 
-  const askCentroid = askId ? STATE_CENTROIDS[askId] : null;
-
-  const pinScale = zoomed ? 0.55 : 1;
-
   return (
     <div className={`map-frame ${zoomed ? "is-zoomed" : ""}`} data-zoomed={zoomed ? "true" : "false"}>
     <svg ref={svgRef} className="usa-map" viewBox={viewBox} role="img" aria-label="Map of the United States">
@@ -151,27 +147,6 @@ export function UsaMap({
           </path>
         );
       })}
-      {askId && askCentroid && !lit.has(askId) && (
-        <g className="ask-marker" pointerEvents="none">
-          <circle
-            className="ask-halo"
-            cx={askCentroid[0]}
-            cy={askCentroid[1]}
-            r={(SMALL_STATES.has(askId) ? 17 : 12) * pinScale}
-            fill="none"
-            stroke={ASK}
-            strokeWidth={zoomed ? 1.6 : 2.6}
-          />
-          <circle
-            cx={askCentroid[0]}
-            cy={askCentroid[1]}
-            r={(SMALL_STATES.has(askId) ? 7 : 5) * pinScale}
-            fill={ASK}
-            stroke="#f7f0e2"
-            strokeWidth={zoomed ? 1.1 : 1.6}
-          />
-        </g>
-      )}
       {showLabels &&
         STATE_PATHS.map((path) => {
           if (path.id === "DC") return null;

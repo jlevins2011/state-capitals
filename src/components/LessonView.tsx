@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { getLesson, WORLDS } from "../data/curriculum";
 import { getState } from "../data/states";
 import { sounds } from "../lib/audio";
-import { buildDeck, factId, withFocusedState } from "../lib/quiz";
+import { buildDeck, factId, withFocusedState, withPlayMode } from "../lib/quiz";
 import { useActiveChild, useStore } from "../store/StoreContext";
 import type { MatchQuestion, Question } from "../types";
 import { Maggie } from "./Maggie";
+import { MatchBoard } from "./MatchBoard";
 import { Pip } from "./Pip";
 import { StateSilhouette, UsaMap } from "./UsaMap";
 
@@ -16,9 +17,10 @@ export function LessonView({ lessonId }: { lessonId: string }) {
   const [started, setStarted] = useState(false);
   const [deck] = useState(() => {
     if (!lesson) return [];
-    const focus =
-      typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get("focus")?.toUpperCase();
-    return withFocusedState(buildDeck(lesson), lesson, focus);
+    const params = typeof window === "undefined" ? null : new URLSearchParams(window.location.search);
+    const focus = params?.get("focus")?.toUpperCase();
+    const play = params?.get("play")?.toLowerCase();
+    return withPlayMode(withFocusedState(buildDeck(lesson), lesson, focus), lesson, play);
   });
   const [index, setIndex] = useState(0);
   const [correct, setCorrect] = useState(0);
@@ -204,32 +206,14 @@ export function LessonView({ lessonId }: { lessonId: string }) {
               )}
 
               {question.kind === "match" && (
-                <div className="match-board">
-                  <div className="match-col">
-                    {question.left.map((item) => (
-                      <button
-                        key={item.id}
-                        className={`choice ${leftPick === item.id ? "is-on" : ""} ${matched.includes(item.id) ? "is-lit" : ""}`}
-                        disabled={!!feedback || matched.includes(item.id)}
-                        onClick={() => onMatch("left", item.id, question)}
-                      >
-                        {item.label}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="match-col">
-                    {question.right.map((item) => (
-                      <button
-                        key={item.id}
-                        className={`choice ${matched.includes(item.id) ? "is-lit" : ""}`}
-                        disabled={!!feedback || matched.includes(item.id)}
-                        onClick={() => onMatch("right", item.id, question)}
-                      >
-                        {item.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                <MatchBoard
+                  question={question}
+                  leftPick={leftPick}
+                  matched={matched}
+                  locked={!!feedback}
+                  onPickLeft={(id) => onMatch("left", id, question)}
+                  onChooseRight={(id) => onMatch("right", id, question)}
+                />
               )}
 
               {feedback && (
