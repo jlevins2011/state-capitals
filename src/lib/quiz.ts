@@ -130,7 +130,7 @@ export function buildMatch(poolIds: string[], rand: () => number = Math.random):
   return {
     kind: "match",
     skill: "match-capitals",
-    prompt: "Match each state to its capital.",
+    prompt: "Drag each state to its capital.",
     left,
     right,
     pairs,
@@ -181,6 +181,13 @@ export function withFocusedState(deck: Question[], lesson: Lesson, stateId: stri
   if (!stateId || !lesson.stateIds.includes(stateId)) return deck;
   const rest = deck.filter((q) => !("stateId" in q) || q.stateId !== stateId);
   return [buildChoice("highlight-name", stateId, lesson.stateIds), ...rest].slice(0, lesson.questionCount);
+}
+
+export function withPlayMode(deck: Question[], lesson: Lesson, play: string | null | undefined): Question[] {
+  if (play !== "match" || lesson.stateIds.length < 4) return deck;
+  const existing = deck.find((q): q is MatchQuestion => q.kind === "match");
+  const match = existing ?? buildMatch(lesson.stateIds);
+  return [match, ...deck.filter((q) => q !== match)].slice(0, lesson.questionCount);
 }
 
 export function accuracyOf(correct: number, errors: number): number {

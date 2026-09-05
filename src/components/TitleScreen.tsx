@@ -1,5 +1,6 @@
 import { unlockAudio } from "../lib/audio";
 import { useStore } from "../store/StoreContext";
+import { APP_VERSION } from "../version";
 import { Pip } from "./Pip";
 
 export function TitleScreen() {
@@ -32,6 +33,7 @@ export function TitleScreen() {
             Parent reports
           </button>
         </div>
+        <p className="app-version">Version {APP_VERSION}</p>
       </header>
       <ul className="title-points">
         <li>Travel five camps: Northeast, Southeast, Midwest, Southwest, West</li>
