@@ -45,15 +45,16 @@ export function shouldZoomToState(
   smallIds: Set<string>,
 ): boolean {
   if (smallIds.has(id)) return true;
-  return areaRatio(bounds, view) < 0.045;
+  return areaRatio(bounds, view) < 0.03;
 }
 
 export function zoomViewBox(bounds: Bounds, mode: "tight" | "wide"): ViewBox {
-  const padMul = mode === "wide" ? 2.8 : 1.2;
-  const minPad = mode === "wide" ? 36 : 18;
+  const minSpan = mode === "wide" ? 80 : 64;
+  const padMul = mode === "wide" ? 2.2 : 1.15;
+  const minPad = mode === "wide" ? 20 : 8;
   const pad = Math.max(bounds.width, bounds.height) * padMul + minPad;
-  const width = Math.max(bounds.width + pad * 2, 40);
-  const height = Math.max(bounds.height + pad * 2, 40);
+  const width = Math.max(bounds.width + pad * 2, minSpan);
+  const height = Math.max(bounds.height + pad * 2, minSpan);
   return [bounds.x - (width - bounds.width) / 2, bounds.y - (height - bounds.height) / 2, width, height];
 }
 

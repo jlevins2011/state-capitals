@@ -35,7 +35,8 @@ describe("map view", () => {
     expect(areaRatio(rhodeIsland, northeast)).toBeLessThan(0.01);
     const zoomed = zoomViewBox(rhodeIsland, "tight");
     expect(zoomed[2]).toBeGreaterThan(rhodeIsland.width);
-    expect(zoomed[2] * zoomed[3]).toBeLessThan(northeast[2] * northeast[3]);
+    expect(zoomed[2]).toBeLessThan(90);
+    expect(zoomed[2] * zoomed[3]).toBeLessThan((northeast[2] * northeast[3]) / 4);
   });
 
   it("does not zoom a large state that already fills the view", () => {

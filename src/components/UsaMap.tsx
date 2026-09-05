@@ -146,15 +146,10 @@ export function UsaMap({
         );
       })}
       {askId && askCentroid && !lit.has(askId) && (
-        <circle
-          className="ask-halo"
-          cx={askCentroid[0]}
-          cy={askCentroid[1]}
-          r={SMALL_STATES.has(askId) ? 16 : 11}
-          fill="none"
-          stroke={ASK}
-          strokeWidth="2.4"
-        />
+        <g className="ask-marker" pointerEvents="none">
+          <circle className="ask-halo" cx={askCentroid[0]} cy={askCentroid[1]} r={SMALL_STATES.has(askId) ? 17 : 12} fill="none" stroke={ASK} strokeWidth="2.6" />
+          <circle cx={askCentroid[0]} cy={askCentroid[1]} r={SMALL_STATES.has(askId) ? 7 : 5} fill={ASK} stroke="#f7f0e2" strokeWidth="1.6" />
+        </g>
       )}
       {showLabels &&
         STATE_PATHS.map((path) => {

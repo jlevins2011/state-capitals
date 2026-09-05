@@ -431,4 +431,4 @@ export const REGION_VIEWS: Record<string, string> = {
   west: "0 8 420 575",
 };
 
-export const SMALL_STATES = new Set(["RI", "DE", "CT", "NJ", "DC", "MD", "VT", "NH", "MA", "HI"]);
+export const SMALL_STATES = new Set(["RI", "DE", "CT", "NJ", "DC", "HI"]);
