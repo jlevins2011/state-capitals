@@ -142,7 +142,7 @@ export function UsaMap({
             fill={fill}
             opacity={isFocus ? 1 : 0.22}
             stroke={isAsk ? "#f7f0e2" : "#12231c"}
-            strokeWidth={isAsk ? 2.6 : isLit && path.id === askId ? 2 : 1}
+            strokeWidth={isAsk ? (zoomed ? 1.15 : 2.6) : isLit && path.id === askId ? (zoomed ? 1 : 2) : 1}
             onClick={() => {
               if (interactive && path.id !== "DC") onSelect?.(path.id);
             }}
@@ -178,6 +178,7 @@ export function UsaMap({
           const centroid = STATE_CENTROIDS[path.id];
           if (!centroid) return null;
           const force = path.id === askId || lit.has(path.id);
+          if (path.id === askId && !lit.has(path.id)) return null;
           if (!force && regionId === "all" && SMALL_STATES.has(path.id)) return null;
           if (focus && !focus.has(path.id) && path.id !== askId) return null;
           return (
