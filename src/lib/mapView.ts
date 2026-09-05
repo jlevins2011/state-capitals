@@ -48,14 +48,20 @@ export function shouldZoomToState(
   return areaRatio(bounds, view) < 0.03;
 }
 
-export function zoomViewBox(bounds: Bounds, mode: "tight" | "wide"): ViewBox {
-  const minSpan = mode === "wide" ? 80 : 64;
-  const padMul = mode === "wide" ? 2.2 : 1.15;
-  const minPad = mode === "wide" ? 20 : 8;
-  const pad = Math.max(bounds.width, bounds.height) * padMul + minPad;
-  const width = Math.max(bounds.width + pad * 2, minSpan);
-  const height = Math.max(bounds.height + pad * 2, minSpan);
-  return [bounds.x - (width - bounds.width) / 2, bounds.y - (height - bounds.height) / 2, width, height];
+/** How much of the camera the state should fill after a close-up. */
+const FILL = { tight: 0.4, wide: 0.2 } as const;
+/** Never stay wider than this share of the regional map — forces a real zoom. */
+const MAX_REGIONAL = { tight: 0.38, wide: 0.58 } as const;
+const MIN_SPAN = { tight: 48, wide: 72 } as const;
+
+export function zoomViewBox(bounds: Bounds, mode: "tight" | "wide", regional?: ViewBox): ViewBox {
+  const longest = Math.max(bounds.width, bounds.height, 10);
+  const regionalSpan = regional ? Math.max(regional[2], regional[3]) : 280;
+  const maxSpan = regionalSpan * MAX_REGIONAL[mode];
+  const span = Math.min(maxSpan, Math.max(longest / FILL[mode], MIN_SPAN[mode]));
+  const cx = bounds.x + bounds.width / 2;
+  const cy = bounds.y + bounds.height / 2;
+  return [cx - span / 2, cy - span / 2, span, span];
 }
 
 export function boundsFromCentroid(cx: number, cy: number, size: number): Bounds {

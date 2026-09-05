@@ -57,6 +57,7 @@ export function UsaMap({
 }) {
   const regionalView = REGION_VIEWS[regionId] ?? MAP_VIEWBOX;
   const [viewBox, setViewBox] = useState(regionalView);
+  const [zoomed, setZoomed] = useState(false);
   const svgRef = useRef<SVGSVGElement>(null);
   const lit = new Set(litIds);
   const focus = focusIds ? new Set(focusIds) : null;
@@ -64,6 +65,7 @@ export function UsaMap({
 
   useEffect(() => {
     setViewBox(regionalView);
+    setZoomed(false);
     const targetId = zoomToId ?? askId;
     if (!targetId) return;
 
@@ -84,12 +86,13 @@ export function UsaMap({
       if (!bounds) return;
       const start = parseViewBox(regionalView);
       if (!shouldZoomToState(targetId, bounds, start, SMALL_STATES)) return;
-      const end = zoomViewBox(bounds, zoomMode);
+      const end = zoomViewBox(bounds, zoomMode, start);
+      setZoomed(true);
       if (reduceMotion) {
         setViewBox(formatViewBox(end));
         return;
       }
-      const duration = 820;
+      const duration = 1100;
       const began = performance.now();
       const tick = (now: number) => {
         if (cancelled) return;
@@ -103,7 +106,7 @@ export function UsaMap({
     if (reduceMotion) {
       run();
     } else {
-      hold = window.setTimeout(run, 700);
+      hold = window.setTimeout(run, 1100);
     }
 
     return () => {
@@ -115,7 +118,10 @@ export function UsaMap({
 
   const askCentroid = askId ? STATE_CENTROIDS[askId] : null;
 
+  const pinScale = zoomed ? 0.55 : 1;
+
   return (
+    <div className={`map-frame ${zoomed ? "is-zoomed" : ""}`} data-zoomed={zoomed ? "true" : "false"}>
     <svg ref={svgRef} className="usa-map" viewBox={viewBox} role="img" aria-label="Map of the United States">
       {STATE_PATHS.map((path) => {
         const info = STATE_BY_ID[path.id];
@@ -147,8 +153,23 @@ export function UsaMap({
       })}
       {askId && askCentroid && !lit.has(askId) && (
         <g className="ask-marker" pointerEvents="none">
-          <circle className="ask-halo" cx={askCentroid[0]} cy={askCentroid[1]} r={SMALL_STATES.has(askId) ? 17 : 12} fill="none" stroke={ASK} strokeWidth="2.6" />
-          <circle cx={askCentroid[0]} cy={askCentroid[1]} r={SMALL_STATES.has(askId) ? 7 : 5} fill={ASK} stroke="#f7f0e2" strokeWidth="1.6" />
+          <circle
+            className="ask-halo"
+            cx={askCentroid[0]}
+            cy={askCentroid[1]}
+            r={(SMALL_STATES.has(askId) ? 17 : 12) * pinScale}
+            fill="none"
+            stroke={ASK}
+            strokeWidth={zoomed ? 1.6 : 2.6}
+          />
+          <circle
+            cx={askCentroid[0]}
+            cy={askCentroid[1]}
+            r={(SMALL_STATES.has(askId) ? 7 : 5) * pinScale}
+            fill={ASK}
+            stroke="#f7f0e2"
+            strokeWidth={zoomed ? 1.1 : 1.6}
+          />
         </g>
       )}
       {showLabels &&
@@ -173,6 +194,8 @@ export function UsaMap({
           );
         })}
     </svg>
+    {zoomed && <span className="zoom-caption">Looking closer</span>}
+    </div>
   );
 }
 

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getLesson, WORLDS } from "../data/curriculum";
 import { getState } from "../data/states";
 import { sounds } from "../lib/audio";
-import { buildDeck, factId } from "../lib/quiz";
+import { buildDeck, factId, withFocusedState } from "../lib/quiz";
 import { useActiveChild, useStore } from "../store/StoreContext";
 import type { MatchQuestion, Question } from "../types";
 import { Maggie } from "./Maggie";
@@ -14,7 +14,12 @@ export function LessonView({ lessonId }: { lessonId: string }) {
   const child = useActiveChild();
   const lesson = getLesson(lessonId);
   const [started, setStarted] = useState(false);
-  const [deck] = useState(() => (lesson ? buildDeck(lesson) : []));
+  const [deck] = useState(() => {
+    if (!lesson) return [];
+    const focus =
+      typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get("focus")?.toUpperCase();
+    return withFocusedState(buildDeck(lesson), lesson, focus);
+  });
   const [index, setIndex] = useState(0);
   const [correct, setCorrect] = useState(0);
   const [errors, setErrors] = useState(0);
@@ -162,8 +167,8 @@ export function LessonView({ lessonId }: { lessonId: string }) {
                   <UsaMap
                     regionId={lesson.regionId}
                     highlightId={question.kind === "choice" ? question.stateId : null}
-                    zoomToId={question.stateId}
-                    zoomMode={question.kind === "tap" ? "wide" : "tight"}
+                    zoomToId={question.kind === "choice" && question.skill === "highlight-name" ? question.stateId : null}
+                    zoomMode="tight"
                     wrongId={wrongId}
                     litIds={factsFound.map((id) => id.split("-")[0])}
                     interactive={question.kind === "tap" && !feedback}
