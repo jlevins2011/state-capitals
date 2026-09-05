@@ -177,6 +177,12 @@ export function buildDeck(lesson: Lesson, rand: () => number = Math.random): Que
   return deck;
 }
 
+export function withFocusedState(deck: Question[], lesson: Lesson, stateId: string | null | undefined): Question[] {
+  if (!stateId || !lesson.stateIds.includes(stateId)) return deck;
+  const rest = deck.filter((q) => !("stateId" in q) || q.stateId !== stateId);
+  return [buildChoice("highlight-name", stateId, lesson.stateIds), ...rest].slice(0, lesson.questionCount);
+}
+
 export function accuracyOf(correct: number, errors: number): number {
   const total = correct + errors;
   if (total === 0) return 100;

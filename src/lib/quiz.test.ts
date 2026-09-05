@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { ALL_STATE_IDS, LESSONS, WORLDS, getLesson } from "../data/curriculum";
 import { REGION_STATES, STATES } from "../data/states";
 import { STATE_PATHS } from "../data/usMap";
-import { accuracyOf, buildDeck, buildMatch, evaluateQuiz, starsFor } from "./quiz";
+import { accuracyOf, buildDeck, buildMatch, evaluateQuiz, starsFor, withFocusedState } from "./quiz";
 
 function seeded(seed = 1): () => number {
   let s = seed;
@@ -126,5 +126,13 @@ describe("quiz builder", () => {
     if (!lesson) throw new Error("missing guide");
     const result = evaluateQuiz(lesson, 4, 2);
     expect(result.passed).toBe(true);
+  });
+
+  it("can pin a highlight question to a small state for review", () => {
+    const lesson = getLesson("ne-meet");
+    if (!lesson) throw new Error("missing guide");
+    const deck = withFocusedState(buildDeck(lesson, seeded(3)), lesson, "RI");
+    expect(deck[0]).toMatchObject({ kind: "choice", skill: "highlight-name", stateId: "RI" });
+    expect(deck).toHaveLength(lesson.questionCount);
   });
 });
