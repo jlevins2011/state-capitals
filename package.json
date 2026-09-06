@@ -1,7 +1,7 @@
 {
   "name": "camp-compass",
   "private": true,
-  "version": "2.0.1",
+  "version": "2.0.2",
   "type": "module",
   "description": "Camp Compass \u2014 a kids geography adventure for US states, capitals, and fun facts.",
   "scripts": {

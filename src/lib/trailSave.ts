@@ -13,6 +13,10 @@ export function readTrail(childId:string,lessonId:string):TrailSave|null {
     // Restart only unfinished legacy decks containing retired trivia questions.
     // Completed lessons, stars, collected facts and historical reports stay intact.
     if (s.deck.some((q: {skill?: string}) => q.skill === "fact" || q.skill === "nickname")) return null;
+    // Older shape questions become full-map questions without losing the trail.
+    s.deck = s.deck.map((q: {skill?: string}) => q.skill === "silhouette"
+      ? {...q, skill: "highlight-name", prompt: "Which state is glowing on the map?"}
+      : q);
     return s;
   } catch { return null; }
 }

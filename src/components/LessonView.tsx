@@ -10,8 +10,8 @@ import { useActiveChild, useStore } from '../store/StoreContext';
 import type { MatchQuestion, Question } from '../types';
 import { MatchBoard } from './MatchBoard';
 import { Pip } from './Pip';
-import { StateSilhouette, UsaMap } from './UsaMap';
-const skillNames:Record<string,string>={'highlight-name':'Map discovery','tap-state':'Find the state',silhouette:'Shape detective','capital-of':'Capital connection','state-of':'Follow the capital','match-capitals':'Connect the capitals'};
+import { UsaMap } from './UsaMap';
+const skillNames:Record<string,string>={'highlight-name':'Map discovery','tap-state':'Find the state','capital-of':'Capital connection','state-of':'Follow the capital','match-capitals':'Connect the capitals'};
 
 export function LessonView({lessonId}:{lessonId:string}) {
   const {state,dispatch}=useStore();
@@ -103,7 +103,6 @@ export function LessonView({lessonId}:{lessonId:string}) {
       <div className="trail-hud"><span>Stop <b>{index+1}</b> of {deck.length}</span><progress aria-label="Trail progress" value={progress} max={1}/><span><b>{correct}</b> lanterns lit</span>{streak>=3&&<span className="streak-badge">✦ {streak} in a row</span>}</div>
       <div className="lesson-stage"><aside className="pip-column"><Pip coat={child.coat} pose={pose} size={108}/><p>{feedback?.ok===false?'A new connection to remember.':streak>=3?'Look at your trail glow!':'Let curiosity lead.'}</p><span className="trail-stop-number">{String(index+1).padStart(2,'0')}</span></aside><section className="prompt-card panel"><p className="eyebrow">{skillNames[question.skill]}</p><h2 ref={prompt} tabIndex={-1}>{question.prompt}</h2>
       {(question.kind==='tap'||(question.kind==='choice'&&question.skill==='highlight-name'))&&<div className="play-map"><UsaMap regionId={lesson.regionId} highlightId={question.kind==='choice'||feedback?question.stateId:null} zoomToId={question.kind==='choice'?question.stateId:null} zoomMode="tight" wrongId={wrongId} litIds={factsFound.map(id=>id.split('-')[0])} interactive={question.kind==='tap'&&!feedback&&!paused} onSelect={id=>mark(id===question.stateId,question,id)} showLabels={showMapLabels} focusIds={lesson.stateIds}/>{!showMapLabels&&<p className="tip label-hint">Use the outline and its neighbors. You’ve got this.</p>}</div>}
-      {question.kind==='choice'&&question.skill==='silhouette'&&<div className="play-map silhouette-wrap"><StateSilhouette stateId={question.stateId}/></div>}
       {question.kind==='choice'&&<div className="choice-grid">{question.choices.map((choice,i)=><button key={choice} className={`choice answer-choice ${feedback&&choice===question.answer?'answer-correct':''} ${feedback&&!feedback.ok&&choice===selected?'answer-wrong':''}`} disabled={!!feedback||paused} onClick={()=>mark(choice===question.answer,question,choice)}><span className="answer-letter" aria-hidden="true">{feedback&&choice===question.answer?'✓':String.fromCharCode(65+i)}</span>{choice}</button>)}</div>}
       {question.kind==='match'&&<MatchBoard question={question} leftPick={leftPick} matched={matched} locked={!!feedback||paused} onPickLeft={id=>setLeftPick(id)} onChooseRight={id=>onMatch(id,question)}/>}
       {feedback&&<div role="status" className={`feedback ${feedback.ok?'is-ok':'is-miss'}`}><strong>{feedback.ok?'✦':'◇'} {feedback.text}</strong><p><span className="fact-label">{feedback.retry || question.kind === 'match' ? 'Trail note' : 'Just for fun · not tested'}</span>{feedback.fact}</p><button ref={feedbackButton} className="btn primary" onClick={next}>{feedback.retry?'Try that connection':index+1>=deck.length?'Complete the trail':'Next lantern'} →</button></div>}

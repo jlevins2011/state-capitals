@@ -7,7 +7,6 @@ export type LessonKind = "guide" | "map" | "capitals" | "facts" | "match" | "exa
 export type QuestionSkill =
   | "highlight-name"
   | "tap-state"
-  | "silhouette"
   | "capital-of"
   | "state-of"
   | "match-capitals";

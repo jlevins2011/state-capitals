@@ -145,9 +145,9 @@ describe("quiz builder", () => {
   });
 });
 
-describe('facts are discoveries, never assessment', () => {
+describe('assessment focuses on maps and capitals', () => {
   it('only assesses state identification and capitals in every trail and exam', () => {
-    const assessed = new Set(['highlight-name', 'tap-state', 'silhouette', 'capital-of', 'state-of', 'match-capitals']);
+    const assessed = new Set(['highlight-name', 'tap-state', 'capital-of', 'state-of', 'match-capitals']);
     for (const lesson of LESSONS) {
       expect(lesson.skills.every(skill => assessed.has(skill))).toBe(true);
       for (const q of buildDeck(lesson, seeded(18))) {

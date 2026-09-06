@@ -65,3 +65,10 @@ geography answer was correct. They never contribute their own score.
 
 An unfinished saved deck containing old trivia restarts with geography-only questions;
 its old partial trivia score is not carried forward. Completed records are untouched.
+
+## 2.0.2 — No standalone shape questions
+
+Remove isolated state-silhouette questions from every trail. Questions now cover
+capitals and finding or identifying states on the real map. Existing lesson IDs,
+stars, and unlocks stay intact. Saved silhouette questions become full-map questions
+with the same state and choices, preserving the current trail and its progress.

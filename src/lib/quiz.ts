@@ -40,11 +40,8 @@ export function buildChoice(
   const state = getState(stateId);
   const others = distractorStates(stateId, poolIds, STATES.map((s) => s.id), 3, rand).map(getState);
 
-  if (skill === "highlight-name" || skill === "silhouette") {
-    const prompt =
-      skill === "silhouette"
-        ? "Which state is this shape?"
-        : "Which state is glowing on the map?";
+  if (skill === "highlight-name") {
+    const prompt = "Which state is glowing on the map?";
     return {
       kind: "choice",
       skill,

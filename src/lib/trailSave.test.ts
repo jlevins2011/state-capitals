@@ -11,3 +11,11 @@ it('does not resume old trivia questions or carry their partial scores into the 
     expect(readTrail('one','ne-meet')).toBeNull();
   }
 });
+it('converts saved silhouette questions to full-map questions without losing progress',()=>{
+  localStorage.setItem('camp-compass.trail.one',JSON.stringify({...draft,deck:[{...draft.deck[0],skill:'silhouette',prompt:'Which state is this shape?'}]}));
+  const resumed=readTrail('one','ne-meet')!;
+  expect(resumed.deck[0]).toEqual({...draft.deck[0],skill:'highlight-name',prompt:'Which state is glowing on the map?'});
+  expect(resumed.correct).toBe(draft.correct);
+  expect(resumed.index).toBe(draft.index);
+  expect(resumed.elapsed).toBe(draft.elapsed);
+});
