@@ -449,7 +449,7 @@ const RAW: Draft[] = [
     skills: ["highlight-name"],
     questionCount: 6,
     goals: { accuracy: 60 },
-    intro: "Sunset Summit is eleven western states, plus two that hide in the map corners: Alaska and Hawaii. Pip’s lantern has to travel farthest here.",
+    intro: "Sunset Summit is eleven western states, including two that hide in the map corners: Alaska and Hawaii. Pip’s lantern has to travel farthest here.",
     tip: "California is the long Pacific coast. Alaska is the inset at the bottom left. Hawaii is the island chain beside it.",
   }),
   L({

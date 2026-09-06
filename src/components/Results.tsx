@@ -14,15 +14,15 @@ function formatPlayTime(ms: number): string {
 }
 
 export function Results({ lessonId, sessionId }: { lessonId: string; sessionId: string }) {
-  const { dispatch } = useStore();
+  const { state, dispatch } = useStore();
   const child = useActiveChild();
   const lesson = getLesson(lessonId);
   const session = child?.sessions.find((item) => item.id === sessionId);
   const next = nextLessonId(lessonId);
 
   useEffect(() => {
-    if (session?.passed) sounds.star();
-  }, [session?.passed]);
+    if (session?.passed && state.settings.sound) sounds.star();
+  }, [session?.passed, state.settings.sound]);
 
   if (!child || !lesson || !session) return null;
   const world = WORLDS.find((w) => w.id === lesson.worldId);
@@ -45,7 +45,7 @@ export function Results({ lessonId, sessionId }: { lessonId: string; sessionId: 
     headline = "Passport still waiting.";
     body = `Aim for ${lesson.goals.accuracy}% accuracy. Warm up on the earlier lanterns, then try again.`;
   } else {
-    headline = "Pip stumbled, not you.";
+    headline = "A little practice. A brighter trail.";
     body = `Try to land ${lesson.goals.accuracy}% accuracy. The map does not go anywhere.`;
   }
 
@@ -82,12 +82,14 @@ export function Results({ lessonId, sessionId }: { lessonId: string; sessionId: 
           <span>time</span>
         </div>
       </div>
+      {session.passed && <div className="reward-note"><b>{lesson.kind === "exam" ? `✧ ${world?.name} passport stamped` : "✦ Another light on your expedition"}</b><p>{lesson.kind === "exam" ? "Your stamp is waiting on the expedition map." : `${new Set(session.factsFound.map(id => id.split("-")[0])).size} states explored on this trail. Find their stories in your journal.`}</p></div>}
       {weak.length > 0 && (
         <p className="weak">
           Practice next:{" "}
           {weak.map(([id, n]) => `${getState(id).name} (${n})`).join(" · ")}
         </p>
       )}
+      {weak.length > 0 && <div className="review-cards">{weak.map(([id]) => <div className="review-card" key={id}><b>{getState(id).name}</b><span>{getState(id).capital}</span></div>)}</div>}
       <div className="row-actions">
         <button className="btn ghost" onClick={() => dispatch({ type: "go", view: { name: "map" } })}>
           Camps

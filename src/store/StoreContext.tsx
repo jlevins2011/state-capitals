@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useReducer, useState, type Dispatch, type ReactNode } from "react";
+import { setSoundEnabled } from "../lib/audio";
 import { getLesson } from "../data/curriculum";
 import { evaluateQuiz } from "../lib/quiz";
 import { appendSession, createChild, emptyStore, hashPin, loadStore, mergeLessonRecord, newId, saveStore } from "../lib/storage";
@@ -134,6 +135,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     const { version, parentPin, children, activeChildId, settings } = state;
     saveStore({ version, parentPin, children, activeChildId, settings });
   }, [state, hydrated]);
+
+  useEffect(() => { setSoundEnabled(state.settings.sound); }, [state.settings.sound]);
 
   const value = useMemo(() => ({ state, dispatch }), [state]);
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;

@@ -1,46 +1,18 @@
-import { unlockAudio } from "../lib/audio";
-import { useStore } from "../store/StoreContext";
-import { APP_VERSION } from "../version";
-import { Pip } from "./Pip";
+import { unlockAudio } from '../lib/audio';
+import { useActiveChild, useStore } from '../store/StoreContext';
+import { APP_VERSION } from '../version';
+import { Pip } from './Pip';
 
 export function TitleScreen() {
-  const { state, dispatch } = useStore();
-  return (
-    <div className="screen title-screen">
-      <div className="fireflies" aria-hidden="true">
-        {Array.from({ length: 18 }).map((_, i) => (
-          <span key={i} className="firefly" style={{ ["--i" as string]: i }} />
-        ))}
-      </div>
-      <header className="title-hero">
-        <Pip coat="ember" pose="sit" size={140} />
-        <p className="eyebrow">An original geography adventure</p>
-        <h1>Camp Compass</h1>
-        <p className="lede">
-          Light a lantern in every state. Pip the fox needs a trail partner to learn the United States by region — shapes, capitals, and a pocket of fun facts.
-        </p>
-        <div className="title-actions">
-          <button
-            className="btn primary"
-            onClick={() => {
-              unlockAudio();
-              dispatch({ type: "go", view: { name: "profiles" } });
-            }}
-          >
-            {state.children.length ? "Play" : "Start adventure"}
-          </button>
-          <button className="btn ghost" onClick={() => dispatch({ type: "go", view: { name: "parent-gate" } })}>
-            Parent reports
-          </button>
-        </div>
-        <p className="app-version">Version {APP_VERSION}</p>
-      </header>
-      <ul className="title-points">
-        <li>Travel five camps: Northeast, Southeast, Midwest, Southwest, West</li>
-        <li>Tap states on a real map, match capitals, and collect story stones</li>
-        <li>Wrong answers teach the fact — Maggie the beagle only sneaks in if it gets silly</li>
-        <li>PIN-protected reports for grown-ups, same as Keytrail</li>
-      </ul>
+  const { dispatch } = useStore();
+  const child = useActiveChild();
+  return <div className="screen title-screen expedition-title">
+    <nav className="brand-bar"><span className="brand"><span aria-hidden="true">✧</span> CAMP COMPASS</span><button className="text-back" onClick={() => dispatch({type:'go',view:{name:'parent-gate'}})}>For grown-ups ↗</button></nav>
+    <div className="title-landscape">
+      <div className="fireflies" aria-hidden="true">{Array.from({length:16},(_,i)=><span key={i} className="firefly" style={{['--i' as string]:i}} />)}</div>
+      <header className="title-copy"><p className="eyebrow">Fifty states. One unforgettable journey.</p><h1>A little curiosity.<br/>A grand adventure.</h1><p className="lede">Follow the lanterns with Pip. Discover the states, learn their capitals, and fill your passport with places you’ll never forget.</p><div className="title-actions"><button className="btn primary" onClick={()=>{unlockAudio();dispatch({type:'go',view:{name:child?'map':'profiles'}});}}>{child ? `Continue as ${child.name}` : 'Begin your adventure'} <span aria-hidden="true">→</span></button>{child && <button className="btn ghost" onClick={()=>dispatch({type:'go',view:{name:'profiles'}})}>Switch explorer</button>}</div><p className="title-note">Your progress stays saved on this device.</p></header>
+      <div className="pip-welcome"><Pip coat={child?.coat ?? 'ember'} pose="idle" size={118}/><div><b>Your trail partner, Pip</b><span>“There’s a whole country out there.”</span></div></div>
     </div>
-  );
+    <div className="adventure-promises"><div><span>01 / EXPLORE</span><h2>Find your way.</h2><p>Real maps. Recognizable shapes. One region at a time.</p></div><div><span>02 / DISCOVER</span><h2>Make connections.</h2><p>Match each state to its capital and uncover its stories.</p></div><div><span>03 / COLLECT</span><h2>Leave a little light.</h2><p>Earn stars, collect story stones, and stamp all six camps.</p></div></div><footer className="title-footer">An adventure for curious minds <span>Camp Compass · {APP_VERSION}</span></footer>
+  </div>;
 }

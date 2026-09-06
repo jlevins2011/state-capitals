@@ -1,15 +1,16 @@
 {
   "name": "camp-compass",
   "private": true,
-  "version": "1.2.0",
+  "version": "2.0.0",
   "type": "module",
-  "description": "Camp Compass — a kids geography adventure for US states, capitals, and fun facts.",
+  "description": "Camp Compass \u2014 a kids geography adventure for US states, capitals, and fun facts.",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host --port 4173",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:browser": "node tests/browser-smoke.cjs"
   },
   "dependencies": {
     "react": "^19.1.1",
@@ -20,6 +21,7 @@
     "@types/react-dom": "^19.1.9",
     "@vitejs/plugin-react": "^5.0.2",
     "jsdom": "^26.1.0",
+    "playwright": "^1.63.0",
     "typescript": "^5.9.2",
     "vite": "^7.1.5",
     "vitest": "^3.2.4"

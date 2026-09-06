@@ -6,6 +6,12 @@ Camp Compass is a sibling of [Keytrail](https://github.com/jlevins2011/typing-ga
 
 The fox, writing, UI, and quiz content were made for this project. The blank US state outlines are [CC0 public-domain map data](https://commons.wikimedia.org/wiki/File:Blank_US_Map_(states_only).svg) from Wikimedia Commons.
 
+## Expedition edition · 2.0
+
+An illustrated expedition screen, camp passports, saved trails with pause and resume,
+recoverable matching, touch map controls, a searchable journal, and layered chimes.
+See [release notes and verification](docs/EXPEDITION-2.0.md).
+
 ## Play
 
 Live (after Pages is enabled): [https://jlevins2011.github.io/state-capitals/](https://jlevins2011.github.io/state-capitals/)

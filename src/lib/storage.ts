@@ -45,7 +45,8 @@ export function loadStore(): StoreData {
 }
 
 export function saveStore(data: StoreData): void {
-  localStorage.setItem(KEY, JSON.stringify(data));
+  try { localStorage.setItem(KEY, JSON.stringify(data)); window.dispatchEvent(new CustomEvent("camp-save-status", { detail: true })); }
+  catch { window.dispatchEvent(new CustomEvent("camp-save-status", { detail: false })); }
 }
 
 export function hashPin(pin: string): string {

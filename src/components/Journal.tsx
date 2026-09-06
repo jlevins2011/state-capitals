@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { STATES } from "../data/states";
 import { useActiveChild, useStore } from "../store/StoreContext";
 import { Pip } from "./Pip";
@@ -5,6 +6,8 @@ import { Pip } from "./Pip";
 export function Journal() {
   const { dispatch } = useStore();
   const child = useActiveChild();
+  const [query, setQuery] = useState("");
+  const [collectedOnly, setCollectedOnly] = useState(false);
   if (!child) return null;
 
   const found = new Set(child.factsFound.map((id) => id.split("-")[0]));
@@ -23,8 +26,9 @@ export function Journal() {
           </p>
         </div>
       </div>
+      <div className="journal-tools"><input aria-label="Search states or capitals" placeholder="Find a state or capital…" value={query} onChange={e => setQuery(e.target.value)}/><button aria-pressed={collectedOnly} onClick={() => setCollectedOnly(v => !v)}>Collected stones</button></div>
       <div className="journal-grid">
-        {STATES.map((state) => {
+        {STATES.filter(s => (!collectedOnly || found.has(s.id)) && `${s.name} ${s.capital}`.toLowerCase().includes(query.toLowerCase())).map((state) => {
           const known = found.has(state.id);
           return (
             <article key={state.id} className={`journal-card panel ${known ? "is-known" : "is-locked"}`}>
@@ -38,7 +42,7 @@ export function Journal() {
                     Capital: <b>{state.capital}</b>
                   </p>
                   <p>The {state.nickname}</p>
-                  <p className="tip">{state.facts[0]}</p>
+                  <p className="tip">{state.facts[0]}</p><p className="tip">{state.facts[1]}</p>
                 </>
               ) : (
                 <p className="muted">Still dark. Play a trail that visits this state.</p>

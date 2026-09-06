@@ -116,9 +116,17 @@ export function UsaMap({
     };
   }, [askId, regionalView, zoomMode, zoomToId]);
 
+  function adjustMap(scale: number, dx = 0, dy = 0) {
+    const [x,y,w,h] = parseViewBox(viewBox);
+    const [, , baseW] = parseViewBox(regionalView);
+    const width = Math.max(45, Math.min(baseW * 2, w * scale));
+    const height = h * width / w;
+    setViewBox(formatViewBox([x + (w-width)/2 + w*dx, y + (h-height)/2 + h*dy, width, height]));
+  }
+
   return (
     <div className={`map-frame ${zoomed ? "is-zoomed" : ""}`} data-zoomed={zoomed ? "true" : "false"}>
-    <svg ref={svgRef} className="usa-map" viewBox={viewBox} role="img" aria-label="Map of the United States">
+    <svg ref={svgRef} className="usa-map" viewBox={viewBox} role={interactive ? "group" : "img"} aria-label="Map of the United States">
       {STATE_PATHS.map((path) => {
         const info = STATE_BY_ID[path.id];
         if (!info && path.id !== "DC") return null;
@@ -134,6 +142,10 @@ export function UsaMap({
             id={`state-${path.id}`}
             data-state={path.id}
             d={path.d}
+            role={interactive && path.id !== "DC" ? "button" : undefined}
+            tabIndex={interactive && path.id !== "DC" && isFocus ? 0 : undefined}
+            aria-label={interactive ? `Select map shape ${STATE_PATHS.indexOf(path) + 1}${showLabels ? ` (${path.id})` : ""}` : undefined}
+            onKeyDown={e => { if (interactive && path.id !== "DC" && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); onSelect?.(path.id); } }}
             className={`usa-state ${isAsk ? "is-ask" : ""} ${isLit ? "is-lit" : ""} ${interactive ? "is-hot" : ""}`}
             fill={fill}
             opacity={isFocus ? 1 : 0.22}
@@ -143,7 +155,7 @@ export function UsaMap({
               if (interactive && path.id !== "DC") onSelect?.(path.id);
             }}
           >
-            <title>{info?.name ?? "Washington, D.C."}</title>
+            {!interactive && !askId && <title>{info?.name ?? "Washington, D.C."}</title>}
           </path>
         );
       })}
@@ -170,6 +182,7 @@ export function UsaMap({
           );
         })}
     </svg>
+    {interactive && <div className="map-controls" aria-label="Map controls"><button aria-label="Zoom in" onClick={() => adjustMap(.7)}>+</button><button aria-label="Zoom out" onClick={() => adjustMap(1.4)}>−</button><button aria-label="Pan left" onClick={() => adjustMap(1,-.2)}>←</button><button aria-label="Pan right" onClick={() => adjustMap(1,.2)}>→</button><button aria-label="Pan up" onClick={() => adjustMap(1,0,-.2)}>↑</button><button aria-label="Pan down" onClick={() => adjustMap(1,0,.2)}>↓</button><button aria-label="Reset map view" onClick={() => setViewBox(regionalView)}>Reset</button></div>}
     {zoomed && <span className="zoom-caption">Looking closer</span>}
     </div>
   );

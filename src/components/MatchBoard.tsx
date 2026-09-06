@@ -71,6 +71,7 @@ export function MatchBoard({
                 className={`choice ${isHeld ? "is-on" : ""} ${tone ? "is-paired" : ""} ${drag?.id === item.id ? "is-dragging" : ""}`}
                 style={tone ? { background: tone.bg, color: tone.ink } : undefined}
                 disabled={locked || matched.includes(item.id)}
+                onClick={(event) => { if (event.detail === 0) onPickLeft(item.id); }}
                 onPointerDown={(event) => startDrag(item.id, item.label, event)}
                 onPointerMove={moveDrag}
                 onPointerUp={endDrag}
