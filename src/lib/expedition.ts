@@ -17,6 +17,6 @@ export function explorerRank(child: Child): string {
 }
 export function questionFacts(q: Question, stateId?: string): string[] {
   if (q.kind === 'match') return (stateId ? [stateId] : q.left.map(s => s.id)).map(id => `${id}-0`);
-  const second = q.skill === 'capital-of' || q.skill === 'fact';
+  const second = q.skill === 'capital-of';
   return [`${q.stateId}-${second ? 1 : 0}`];
 }

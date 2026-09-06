@@ -39,7 +39,6 @@ export function buildChoice(
 ): ChoiceQuestion {
   const state = getState(stateId);
   const others = distractorStates(stateId, poolIds, STATES.map((s) => s.id), 3, rand).map(getState);
-  const extra = STATES.filter((s) => s.id !== stateId);
 
   if (skill === "highlight-name" || skill === "silhouette") {
     const prompt =
@@ -82,29 +81,7 @@ export function buildChoice(
     };
   }
 
-  if (skill === "nickname") {
-    return {
-      kind: "choice",
-      skill,
-      stateId,
-      prompt: `Which state is the ${state.nickname}?`,
-      choices: choicesFor(state.name, others.map((s) => s.name), rand),
-      answer: state.name,
-      fact: `${state.name} is also called the ${state.nickname}.`,
-    };
-  }
-
-  const fact = state.facts[0];
-  const decoys = pickN(extra, 3, rand).map((s) => s.name);
-  return {
-    kind: "choice",
-    skill: "fact",
-    stateId,
-    prompt: fact,
-    choices: choicesFor(state.name, decoys, rand),
-    answer: state.name,
-    fact: state.facts[1],
-  };
+  throw new Error(`Unsupported geography skill: ${skill}`);
 }
 
 export function buildTap(stateId: string): TapQuestion {

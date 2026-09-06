@@ -10,8 +10,6 @@ export type QuestionSkill =
   | "silhouette"
   | "capital-of"
   | "state-of"
-  | "fact"
-  | "nickname"
   | "match-capitals";
 
 export type Mood = "dawn" | "day" | "dusk" | "fire" | "night";

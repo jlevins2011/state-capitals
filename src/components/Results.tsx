@@ -34,7 +34,7 @@ export function Results({ lessonId, sessionId }: { lessonId: string; sessionId: 
   let body = "Every run lights a little more of the map.";
   if (session.passed && session.stars >= 3) {
     headline = "Lanterns blazing!";
-    body = "Shapes, capitals, and stories — that was a keeper’s run.";
+    body = "State shapes and capitals — that was a keeper’s run.";
   } else if (session.passed && session.stars === 2) {
     headline = "The camp is bright.";
     body = "Great accuracy. One more smooth trail and the third star is yours.";

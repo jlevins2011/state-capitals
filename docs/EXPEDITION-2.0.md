@@ -54,3 +54,14 @@ to the operating-system temporary directory. Physical iPad testing is separate.
 
 `public/art/camp-dusk.webp` was created with the built-in image generation tool, then
 encoded as WebP for delivery. The full generation prompt is in `docs/ART-PROMPT.txt`.
+
+## 2.0.1 — Fun facts without testing
+
+Fun-fact and nickname questions are removed from all trails and exams. The six former
+trivia trails now review state identification and capitals, retaining their lesson IDs
+so completed progress, earned stars, and unlocks remain valid. Facts appear after
+answers as “Just for fun · not tested” and enter the journal regardless of whether the
+geography answer was correct. They never contribute their own score.
+
+An unfinished saved deck containing old trivia restarts with geography-only questions;
+its old partial trivia score is not carried forward. Completed records are untouched.

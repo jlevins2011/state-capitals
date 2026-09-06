@@ -144,3 +144,23 @@ describe("quiz builder", () => {
     expect(deck).toHaveLength(lesson.questionCount);
   });
 });
+
+describe('facts are discoveries, never assessment', () => {
+  it('only assesses state identification and capitals in every trail and exam', () => {
+    const assessed = new Set(['highlight-name', 'tap-state', 'silhouette', 'capital-of', 'state-of', 'match-capitals']);
+    for (const lesson of LESSONS) {
+      expect(lesson.skills.every(skill => assessed.has(skill))).toBe(true);
+      for (const q of buildDeck(lesson, seeded(18))) {
+        expect(assessed.has(q.skill)).toBe(true);
+        expect(q.fact.length).toBeGreaterThan(0);
+      }
+    }
+  });
+  it('keeps former story trail IDs so earned stars and unlocks still apply', () => {
+    for (const id of ['ne-facts','se-facts','mw-facts','sw-facts','we-facts','atlas-facts']) {
+      const lesson = getLesson(id)!;
+      expect(lesson.kind).toBe('capitals');
+      expect(lesson.skills).toContain('capital-of');
+    }
+  });
+});

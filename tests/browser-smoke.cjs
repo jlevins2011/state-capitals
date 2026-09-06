@@ -80,5 +80,14 @@ const mac='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
  await page.getByRole('button',{name:'Story journal',exact:true}).click();await page.getByRole('textbox',{name:'Search states or capitals'}).fill('Maine');assert.equal(await page.locator('.journal-card').count(),1);
  await page.getByRole('button',{name:'Camps',exact:false}).click();await page.getByRole('button',{name:'Settings',exact:true}).click();assert.equal(await page.getByLabel('Sounds',{exact:true}).isChecked(),false);
  await page.getByRole('button',{name:'Parent reports',exact:true}).click();assert(await page.getByRole('heading').count()>0);
+ // A fact is a gift even when the geography answer is incorrect.
+ await page.goto(process.env.CAMP_TEST_URL || 'http://127.0.0.1:5174');
+ await page.getByRole('button',{name:'Continue as Scout'}).click();await page.getByRole('button',{name:'Continue the journey'}).click();await page.getByRole('button',{name:'Light the first lantern'}).click();
+ draft=await page.evaluate(()=>JSON.parse(localStorage.getItem(Object.keys(localStorage).find(k=>k.startsWith('camp-compass.trail.')))));
+ const giftQuestion=draft.deck[0];
+ await page.locator('.choice-grid').getByRole('button',{name:giftQuestion.choices.find(c=>c!==giftQuestion.answer),exact:false}).click();
+ assert(await page.getByText('Just for fun · not tested',{exact:true}).isVisible());
+ draft=await page.evaluate(()=>JSON.parse(localStorage.getItem(Object.keys(localStorage).find(k=>k.startsWith('camp-compass.trail.')))));
+ assert.equal(draft.correct,0);assert.equal(draft.errors,1);assert(draft.factsFound.includes(giftQuestion.stateId+'-0'));
  assert.deepEqual(errors,[]);await browser.close();console.log('PASS: new explorer, complete trail, pause, resume, reload, scores, discoveries, next trail reset, mobile width, matching recovery, legacy save, passport unlock, keyboard map, journal search, settings, parent entry, no browser errors');
 })().catch(e=>{console.error(e);process.exit(1)});

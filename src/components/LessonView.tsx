@@ -11,7 +11,7 @@ import type { MatchQuestion, Question } from '../types';
 import { MatchBoard } from './MatchBoard';
 import { Pip } from './Pip';
 import { StateSilhouette, UsaMap } from './UsaMap';
-const skillNames:Record<string,string>={'highlight-name':'Map discovery','tap-state':'Find the state',silhouette:'Shape detective','capital-of':'Capital connection','state-of':'Follow the capital',fact:'Story stone',nickname:'State nickname','match-capitals':'Connect the capitals'};
+const skillNames:Record<string,string>={'highlight-name':'Map discovery','tap-state':'Find the state',silhouette:'Shape detective','capital-of':'Capital connection','state-of':'Follow the capital','match-capitals':'Connect the capitals'};
 
 export function LessonView({lessonId}:{lessonId:string}) {
   const {state,dispatch}=useStore();
@@ -76,6 +76,8 @@ export function LessonView({lessonId}:{lessonId:string}) {
   function mark(ok:boolean,q:Question,choice?:string){
     if(feedback||paused||answerLock.current||q.kind==='match')return;
     answerLock.current=true;setSelected(choice??null);
+    // Facts are gifts for visiting a state, independent of the answer score.
+    setFactsFound(list=>[...new Set([...list,...questionFacts(q)])]);
     if(ok){award(q);setFeedback({ok:true,text:streak>=2?`${streak+1} lanterns in a row!`:'A new light on the trail!',fact:q.fact});}
     else{miss(q.stateId);if(q.kind==='tap')setWrongId(choice??null);setFeedback({ok:false,text:`The answer is ${q.answer}.`,fact:q.fact});}
   }
@@ -104,7 +106,7 @@ export function LessonView({lessonId}:{lessonId:string}) {
       {question.kind==='choice'&&question.skill==='silhouette'&&<div className="play-map silhouette-wrap"><StateSilhouette stateId={question.stateId}/></div>}
       {question.kind==='choice'&&<div className="choice-grid">{question.choices.map((choice,i)=><button key={choice} className={`choice answer-choice ${feedback&&choice===question.answer?'answer-correct':''} ${feedback&&!feedback.ok&&choice===selected?'answer-wrong':''}`} disabled={!!feedback||paused} onClick={()=>mark(choice===question.answer,question,choice)}><span className="answer-letter" aria-hidden="true">{feedback&&choice===question.answer?'✓':String.fromCharCode(65+i)}</span>{choice}</button>)}</div>}
       {question.kind==='match'&&<MatchBoard question={question} leftPick={leftPick} matched={matched} locked={!!feedback||paused} onPickLeft={id=>setLeftPick(id)} onChooseRight={id=>onMatch(id,question)}/>}
-      {feedback&&<div role="status" className={`feedback ${feedback.ok?'is-ok':'is-miss'}`}><strong>{feedback.ok?'✦':'◇'} {feedback.text}</strong><p>{feedback.fact}</p><button ref={feedbackButton} className="btn primary" onClick={next}>{feedback.retry?'Try that connection':index+1>=deck.length?'Complete the trail':'Next lantern'} →</button></div>}
+      {feedback&&<div role="status" className={`feedback ${feedback.ok?'is-ok':'is-miss'}`}><strong>{feedback.ok?'✦':'◇'} {feedback.text}</strong><p><span className="fact-label">{feedback.retry || question.kind === 'match' ? 'Trail note' : 'Just for fun · not tested'}</span>{feedback.fact}</p><button ref={feedbackButton} className="btn primary" onClick={next}>{feedback.retry?'Try that connection':index+1>=deck.length?'Complete the trail':'Next lantern'} →</button></div>}
       </section></div>
     </>}
     {saveFailed&&<p role="alert" className="save-warning">This browser couldn’t save your trail. Keep this tab open to finish your session.</p>}

@@ -10,6 +10,9 @@ const key=(childId:string)=>`camp-compass.trail.${childId}`;
 export function readTrail(childId:string,lessonId:string):TrailSave|null {
   try { const s=JSON.parse(localStorage.getItem(key(childId))??'null');
     if(s?.version!==1 || s.lessonId!==lessonId || !Array.isArray(s.deck) || !s.deck.length || !Number.isInteger(s.index) || s.index<0 || s.index>=s.deck.length || !Array.isArray(s.matched) || !Array.isArray(s.factsFound)) return null;
+    // Restart only unfinished legacy decks containing retired trivia questions.
+    // Completed lessons, stars, collected facts and historical reports stay intact.
+    if (s.deck.some((q: {skill?: string}) => q.skill === "fact" || q.skill === "nickname")) return null;
     return s;
   } catch { return null; }
 }
